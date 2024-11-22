@@ -1,0 +1,51 @@
+{
+  "StartAt": "Process All",
+  "States": {
+    "Process All": {
+      "Type": "Map",
+      "ItemReader": {
+        "ReaderConfig": {
+          "InputType": "CSV",
+          "CSVHeaderLocation": "FIRST_ROW"
+        },
+        "Resource": "arn:aws:states:::s3:getObject",
+        "Parameters": {
+          "Bucket": "step-function-input-bucket",
+          "Key": "s3-object-transaction-dataset.csv"
+        }
+      },
+      "ItemProcessor": {
+        "ProcessorConfig": {
+          "Mode": "DISTRIBUTED",
+          "ExecutionType": "EXPRESS"
+        },
+        "StartAt": "LambdaTask",
+        "States": {
+          "LambdaTask": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "OutputPath": "$.Payload",
+            "Parameters": {
+              "Payload.$": "$",
+              "FunctionName": "arn:aws:lambda:us-east-1:291912718832:function:process-transaction"
+            },
+            "Next": "Complete"
+          },
+          "Complete": {
+            "Type": "Pass",
+            "End": true
+          }
+        }
+      },
+      "Label": "Map",
+      "End": true,
+      "ResultWriter": {
+        "Resource": "arn:aws:states:::s3:putObject",
+        "Parameters": {
+          "Bucket": "step-function-input-bucket",
+          "Prefix": "csvProcessJobs"
+        }
+      }
+    }
+  }
+}

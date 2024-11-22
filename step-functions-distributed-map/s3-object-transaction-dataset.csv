@@ -1,0 +1,4 @@
+transactionId,type,amount
+1000,purchase,20.33
+1001,refund,20
+1002,refund,300
