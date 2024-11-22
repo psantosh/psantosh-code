@@ -4,10 +4,14 @@
     "amount": "32.6"
 }
 
+{
+    "transactionId": "",
+    "type": "purchase",
+    "amount": "32.6"
+}
+
 // Lambda call from CLI
 //  Success
 aws lambda invoke --function-name lambda-app --invocation-type Event --cli-binary-format raw-in-base64-out --payload '{"transactionId": "trs1234", "type": "purchase", "amount": "32.6"}' response.json
 //  Failure
 aws lambda invoke --function-name lambda-app --invocation-type Event --cli-binary-format raw-in-base64-out --payload '{"transactionId": "", "type": "purchase", "amount": "32.6"}' response.json
-
-aws lambda invoke --function-name lambda-dest --invocation-type Event --cli-binary-format raw-in-base64-out --payload '{"transactionId": "", "type": "purchase", "amount": "32.6"}' response.json
